@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-
-const socket = io(); // Conecta ao servidor Socket.io (o mesmo servidor que você configurou anteriormente)
+import axios from 'axios';
+// Altere o endereço para o seu servidor WebSocket
+const socket = io('http://localhost:3001/');
 
 function App() {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
+    const [ip, setIP] = useState("");
+
+    const getData = async () => {
+        const res = await axios.get("https://api.ipify.org/?format=json");
+        console.log(res.data);
+        setIP(res.data.ip);
+      };
 
     useEffect(() => {
         // Escuta por mensagens do servidor e atualiza o estado
@@ -24,6 +32,7 @@ function App() {
             setMessages([...messages, { user: 'Você', text: inputMessage }]);
             socket.emit('chat message', inputMessage);
             setInputMessage('');
+            console.log(inputMessage)
         }
     };
 
